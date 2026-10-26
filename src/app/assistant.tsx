@@ -1,5 +1,5 @@
-import { Ionicons } from '@expo/vector-icons';
-import { useRef, useState } from 'react';
+import { Ionicons } from "@expo/vector-icons";
+import { useRef, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -7,7 +7,7 @@ import {
   Text,
   TextInput,
   View,
-} from 'react-native';
+} from "react-native";
 
 import {
   Banner,
@@ -18,16 +18,16 @@ import {
   Screen,
   errorMessage,
   useTheme,
-} from '@/components/rantau-kit';
-import { askRantauAssistant, type AIMessage } from '@/services/ai.service';
+} from "@/components/rantau-kit";
+import { askRantauAssistant, type AIMessage } from "@/services/ai.service";
 
-type Message = { id: string; role: 'user' | 'assistant'; content: string };
+type Message = { id: string; role: "user" | "assistant"; content: string };
 
 const SUGGESTIONS = [
-  'Ide menu makan hemat untuk anak kost',
-  'Cara mengatur uang bulanan supaya tidak habis di tengah bulan',
-  'Olahraga 15 menit di kamar kost',
-  'Cara mengatasi kangen rumah',
+  "Ide menu makan hemat untuk anak kost",
+  "Cara mengatur uang bulanan supaya tidak habis di tengah bulan",
+  "Olahraga 15 menit di kamar kost",
+  "Cara mengatasi kangen rumah",
 ];
 
 // Dibaca saat build. Ubah di .env lalu restart dengan: npx expo start -c
@@ -39,7 +39,7 @@ export default function AssistantScreen() {
   const counter = useRef(0);
 
   const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -54,9 +54,13 @@ export default function AssistantScreen() {
       .slice(-10)
       .map((message) => ({ role: message.role, content: message.content }));
 
-    const userMessage: Message = { id: nextId(), role: 'user', content: question };
+    const userMessage: Message = {
+      id: nextId(),
+      role: "user",
+      content: question,
+    };
     setMessages((prev) => [...prev, userMessage]);
-    setInput('');
+    setInput("");
     setError(null);
     setSending(true);
 
@@ -64,11 +68,13 @@ export default function AssistantScreen() {
       const answer = await askRantauAssistant(question, history);
       setMessages((prev) => [
         ...prev,
-        { id: nextId(), role: 'assistant', content: answer },
+        { id: nextId(), role: "assistant", content: answer },
       ]);
     } catch (err) {
       // Kembalikan pertanyaan ke kolom ketik agar bisa dikirim ulang.
-      setMessages((prev) => prev.filter((message) => message.id !== userMessage.id));
+      setMessages((prev) =>
+        prev.filter((message) => message.id !== userMessage.id),
+      );
       setInput(question);
       setError(errorMessage(err));
     } finally {
@@ -83,11 +89,13 @@ export default function AssistantScreen() {
       icon="sparkles-outline"
       title="Rantau AI"
       subtitle="Asisten pribadi anak rantau."
-      scroll={false}>
+      scroll={false}
+    >
       {!CONFIGURED ? (
         <Banner tone="warn">
           AI belum terhubung. Isi EXPO_PUBLIC_AI_API_URL di file .env dengan
-          alamat backend AI-mu, lalu jalankan ulang Expo dengan npx expo start -c.
+          alamat backend AI-mu, lalu jalankan ulang Expo dengan npx expo start
+          -c.
         </Banner>
       ) : null}
 
@@ -98,7 +106,9 @@ export default function AssistantScreen() {
         keyExtractor={(item) => item.id}
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={{ flexGrow: 1, gap: 10, paddingVertical: 8 }}
-        onContentSizeChange={() => listRef.current?.scrollToEnd({ animated: true })}
+        onContentSizeChange={() =>
+          listRef.current?.scrollToEnd({ animated: true })
+        }
         ListEmptyComponent={
           <View style={{ gap: 12 }}>
             <EmptyState
@@ -117,38 +127,43 @@ export default function AssistantScreen() {
           sending ? (
             <View
               style={{
-                alignSelf: 'flex-start',
-                flexDirection: 'row',
-                alignItems: 'center',
+                alignSelf: "flex-start",
+                flexDirection: "row",
+                alignItems: "center",
                 gap: 8,
                 padding: 12,
-              }}>
+              }}
+            >
               <ActivityIndicator size="small" color={t.primary} />
-              <Text style={{ color: t.muted, fontSize: 14 }}>Sedang menjawab...</Text>
+              <Text style={{ color: t.muted, fontSize: 14 }}>
+                Sedang menjawab...
+              </Text>
             </View>
-          ) : null
+          ) : undefined
         }
         renderItem={({ item }) => {
-          const mine = item.role === 'user';
+          const mine = item.role === "user";
           return (
             <View
               style={{
-                alignSelf: mine ? 'flex-end' : 'flex-start',
-                maxWidth: '85%',
+                alignSelf: mine ? "flex-end" : "flex-start",
+                maxWidth: "85%",
                 paddingHorizontal: 14,
                 paddingVertical: 10,
                 borderRadius: 16,
                 backgroundColor: mine ? t.primary : t.surface,
                 borderWidth: mine ? 0 : 1,
                 borderColor: t.border,
-              }}>
+              }}
+            >
               <Text
                 selectable
                 style={{
                   color: mine ? t.onPrimary : t.text,
                   fontSize: 15,
                   lineHeight: 22,
-                }}>
+                }}
+              >
                 {item.content}
               </Text>
             </View>
@@ -171,7 +186,7 @@ export default function AssistantScreen() {
         />
       ) : null}
 
-      <View style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 8 }}>
+      <View style={{ flexDirection: "row", alignItems: "flex-end", gap: 8 }}>
         <TextInput
           value={input}
           onChangeText={setInput}
@@ -204,11 +219,12 @@ export default function AssistantScreen() {
             width: 48,
             height: 48,
             borderRadius: 24,
-            alignItems: 'center',
-            justifyContent: 'center',
+            alignItems: "center",
+            justifyContent: "center",
             backgroundColor: t.primary,
             opacity: canSend ? 1 : 0.4,
-          }}>
+          }}
+        >
           <Ionicons name="arrow-up" size={22} color={t.onPrimary} />
         </Pressable>
       </View>

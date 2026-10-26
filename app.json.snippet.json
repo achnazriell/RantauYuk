@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "android": {
+      "package": "com.rantauyuk.app"
+    },
+    "plugins": [
+      "expo-camera",
+      "./plugins/with-rantau-focus"
+    ]
+  }
+}

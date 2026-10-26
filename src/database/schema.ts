@@ -392,6 +392,26 @@ export async function initializeDatabase(
     );
 
     -- =========================================
+    -- VERIFIKASI PENYELESAIAN JADWAL
+    -- Bukti foto kamera / deteksi gerakan / manual.
+    -- =========================================
+    CREATE TABLE IF NOT EXISTS schedule_verifications (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      schedule_id INTEGER NOT NULL,
+      verification_type TEXT NOT NULL DEFAULT 'manual'
+        CHECK (verification_type IN ('camera_photo', 'motion_detection', 'manual')),
+      evidence_uri TEXT,
+      status TEXT NOT NULL DEFAULT 'pending'
+        CHECK (status IN ('pending', 'verified', 'rejected')),
+      notes TEXT,
+      created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      verified_at TEXT,
+      FOREIGN KEY (schedule_id)
+        REFERENCES schedules(id)
+        ON DELETE CASCADE
+    );
+
+    -- =========================================
     -- WORKOUT / OLAHRAGA
     -- =========================================
     CREATE TABLE IF NOT EXISTS workout_logs (
@@ -587,6 +607,12 @@ export async function initializeDatabase(
 
     CREATE INDEX IF NOT EXISTS idx_schedule_logs_date
       ON schedule_logs(completed_date);
+
+    CREATE INDEX IF NOT EXISTS idx_schedule_verifications_lookup
+      ON schedule_verifications(schedule_id, created_at);
+
+    CREATE INDEX IF NOT EXISTS idx_focus_sessions_status
+      ON focus_sessions(status, started_at);
 
     CREATE INDEX IF NOT EXISTS idx_workout_logs_completed
       ON workout_logs(completed_at);
