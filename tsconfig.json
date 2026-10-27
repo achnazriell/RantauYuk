@@ -8,6 +8,10 @@
       ]
     }
   },
+  "exclude": [
+    "node_modules",
+    "example"
+  ],
   "include": [
     "**/*.ts",
     "**/*.tsx",

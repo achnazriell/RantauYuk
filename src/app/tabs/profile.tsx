@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -6,14 +6,14 @@ import {
   Switch,
   Text,
   View,
-} from 'react-native';
-import { router, useFocusEffect } from 'expo-router';
-import { useSQLiteContext } from 'expo-sqlite';
-import { Ionicons } from '@expo/vector-icons';
+} from "react-native";
+import { router, useFocusEffect } from "expo-router";
+import { useSQLiteContext } from "expo-sqlite";
+import { Ionicons } from "@expo/vector-icons";
 
-import { exportBackup } from '@/services/backup.service';
-import { setSickMode } from '@/services/app-blocker.service';
-import { requestNotificationPermission } from '@/services/notifications.service';
+import { exportBackup } from "@/services/backup.service";
+import { setSickMode } from "@/services/app-blocker.service";
+import { requestNotificationPermission } from "@/services/notifications.service";
 
 import {
   Badge,
@@ -24,8 +24,8 @@ import {
   Screen,
   ScreenHeader,
   SectionHeader,
-} from '@/components/ui';
-import { colors, font, radius, spacing } from '@/theme';
+} from "@/components/ui";
+import { colors, font, radius, spacing } from "@/theme";
 
 type Profile = {
   name: string;
@@ -40,14 +40,14 @@ type Profile = {
 };
 
 function rupiah(value: number): string {
-  return `Rp ${Number(value || 0).toLocaleString('id-ID')}`;
+  return `Rp ${Number(value || 0).toLocaleString("id-ID")}`;
 }
 
 function foodLabel(value: string): string {
-  if (value === 'hemat') return 'Hemat';
-  if (value === 'sehat') return 'Sehat';
+  if (value === "hemat") return "Hemat";
+  if (value === "sehat") return "Sehat";
 
-  return 'Hemat dan sehat';
+  return "Hemat dan sehat";
 }
 
 export default function ProfileScreen() {
@@ -77,7 +77,7 @@ export default function ProfileScreen() {
           strict_mode_enabled
         FROM user_preferences
         WHERE id = 1
-        `
+        `,
       );
 
       if (row) {
@@ -87,10 +87,10 @@ export default function ProfileScreen() {
         setProfile(null);
       }
     } catch (error) {
-      console.error('Gagal memuat profil:', error);
+      console.error("Gagal memuat profil:", error);
       Alert.alert(
-        'Gagal memuat profil',
-        'Data profil tidak dapat dibaca dari database. Pastikan database sudah diinisialisasi.'
+        "Gagal memuat profil",
+        "Data profil tidak dapat dibaca dari database. Pastikan database sudah diinisialisasi.",
       );
     } finally {
       setLoadingProfile(false);
@@ -100,7 +100,7 @@ export default function ProfileScreen() {
   useFocusEffect(
     useCallback(() => {
       void loadProfile();
-    }, [loadProfile])
+    }, [loadProfile]),
   );
 
   async function toggleStrictMode(value: boolean) {
@@ -114,25 +114,23 @@ export default function ProfileScreen() {
         SET strict_mode_enabled = ?
         WHERE id = 1
         `,
-        value ? 1 : 0
+        value ? 1 : 0,
       );
 
       if (result.changes === 0) {
-        throw new Error('Data profil tidak ditemukan.');
+        throw new Error("Data profil tidak ditemukan.");
       }
 
       setProfile((current) =>
-        current
-          ? { ...current, strict_mode_enabled: value ? 1 : 0 }
-          : current
+        current ? { ...current, strict_mode_enabled: value ? 1 : 0 } : current,
       );
     } catch (error) {
-      console.error('Gagal memperbarui Strict Mode:', error);
+      console.error("Gagal memperbarui Strict Mode:", error);
       setStrictMode(previousValue);
 
       Alert.alert(
-        'Gagal',
-        'Strict Mode gagal diperbarui. Periksa apakah data profil tersedia.'
+        "Gagal",
+        "Strict Mode gagal diperbarui. Periksa apakah data profil tersedia.",
       );
     }
   }
@@ -146,17 +144,17 @@ export default function ProfileScreen() {
       const uri = await exportBackup(db);
 
       Alert.alert(
-        'Backup selesai',
-        `File backup berhasil dibuat.\n\nLokasi file:\n${uri}`
+        "Backup selesai",
+        `File backup berhasil dibuat.\n\nLokasi file:\n${uri}`,
       );
     } catch (error) {
-      console.error('Backup gagal:', error);
+      console.error("Backup gagal:", error);
 
       Alert.alert(
-        'Backup gagal',
+        "Backup gagal",
         error instanceof Error
           ? error.message
-          : 'Tidak berhasil membuat backup data. Periksa tabel database dan coba lagi.'
+          : "Tidak berhasil membuat backup data. Periksa tabel database dan coba lagi.",
       );
     } finally {
       setSaving(false);
@@ -173,23 +171,23 @@ export default function ProfileScreen() {
 
       if (allowed) {
         Alert.alert(
-          'Izin notifikasi aktif',
-          'Izin notifikasi sudah diberikan. Reminder tetap harus dijadwalkan oleh fitur terkait.'
+          "Izin notifikasi aktif",
+          "Izin notifikasi sudah diberikan. Reminder tetap harus dijadwalkan oleh fitur terkait.",
         );
       } else {
         Alert.alert(
-          'Izin belum diberikan',
-          'Izin notifikasi belum diberikan. Periksa pengaturan notifikasi aplikasi pada perangkat.'
+          "Izin belum diberikan",
+          "Izin notifikasi belum diberikan. Periksa pengaturan notifikasi aplikasi pada perangkat.",
         );
       }
     } catch (error) {
-      console.error('Gagal meminta izin notifikasi:', error);
+      console.error("Gagal meminta izin notifikasi:", error);
 
       Alert.alert(
-        'Notifikasi tidak tersedia',
+        "Notifikasi tidak tersedia",
         error instanceof Error
           ? error.message
-          : 'Tidak dapat mengakses notifikasi. Periksa konfigurasi Expo dan gunakan development build jika diperlukan.'
+          : "Tidak dapat mengakses notifikasi. Periksa konfigurasi Expo dan gunakan development build jika diperlukan.",
       );
     } finally {
       setNotificationLoading(false);
@@ -198,34 +196,34 @@ export default function ProfileScreen() {
 
   function handleSickMode() {
     Alert.alert(
-      'Mode sakit',
-      'Mode ini mempause aktivitas berat dan menggunakan batas hiburan. Aktifkan?',
+      "Mode sakit",
+      "Mode ini mempause aktivitas berat dan menggunakan batas hiburan. Aktifkan?",
       [
         {
-          text: 'Batal',
-          style: 'cancel',
+          text: "Batal",
+          style: "cancel",
         },
         {
-          text: 'Aktifkan',
+          text: "Aktifkan",
           onPress: async () => {
             try {
-              await setSickMode(db, true, 'Lainnya');
+              await setSickMode(db, true, "Lainnya");
 
               Alert.alert(
-                'Mode sakit aktif',
-                'Mode sakit berhasil diaktifkan.'
+                "Mode sakit aktif",
+                "Mode sakit berhasil diaktifkan.",
               );
             } catch (error) {
-              console.error('Gagal mengaktifkan Mode Sakit:', error);
+              console.error("Gagal mengaktifkan Mode Sakit:", error);
 
               Alert.alert(
-                'Gagal',
-                'Mode sakit tidak berhasil diaktifkan. Periksa service dan tabel database terkait.'
+                "Gagal",
+                "Mode sakit tidak berhasil diaktifkan. Periksa service dan tabel database terkait.",
               );
             }
           },
         },
-      ]
+      ],
     );
   }
 
@@ -259,8 +257,8 @@ export default function ProfileScreen() {
     );
   }
 
-  const isIslam = profile.religion_mode === 'islam';
-  const isStudent = profile.occupation_status === 'kuliah';
+  const isIslam = profile.religion_mode === "islam";
+  const isStudent = profile.occupation_status === "kuliah";
 
   return (
     <Screen>
@@ -272,7 +270,7 @@ export default function ProfileScreen() {
       <View style={styles.profileCard}>
         <View style={styles.avatar}>
           <Text style={styles.avatarText}>
-            {(profile.name || '?').charAt(0).toUpperCase()}
+            {(profile.name || "?").charAt(0).toUpperCase()}
           </Text>
         </View>
 
@@ -283,13 +281,13 @@ export default function ProfileScreen() {
 
           <View style={styles.badges}>
             <Badge
-              label={isStudent ? 'Mahasiswa' : 'Pekerja'}
-              icon={isStudent ? 'school-outline' : 'briefcase-outline'}
+              label={isStudent ? "Mahasiswa" : "Pekerja"}
+              icon={isStudent ? "school-outline" : "briefcase-outline"}
               tone="primary"
             />
 
             <Badge
-              label={profile.city_location || 'Lokasi belum diatur'}
+              label={profile.city_location || "Lokasi belum diatur"}
               icon="location-outline"
             />
           </View>
@@ -315,9 +313,7 @@ export default function ProfileScreen() {
           icon="cash-outline"
           title="Sumber dana"
           value={
-            profile.income_type === 'uang_saku'
-              ? 'Uang saku'
-              : 'Gaji sendiri'
+            profile.income_type === "uang_saku" ? "Uang saku" : "Gaji sendiri"
           }
         />
       </ListGroup>
@@ -333,16 +329,22 @@ export default function ProfileScreen() {
         />
 
         <ListRow
-          icon={isIslam ? 'moon-outline' : 'leaf-outline'}
-          title={isIslam ? 'Pelacak sholat' : 'Habit tracker'}
-          subtitle={isIslam ? 'Mode Islam' : 'Mode umum'}
-          onPress={() => router.push(isIslam ? '/prayer' : '/habits')}
+          icon={isIslam ? "moon-outline" : "leaf-outline"}
+          title={isIslam ? "Pelacak sholat" : "Habit tracker"}
+          subtitle={isIslam ? "Mode Islam" : "Mode umum"}
+          onPress={() => router.push(isIslam ? "/prayer" : "/habits")}
         />
       </ListGroup>
 
       <SectionHeader title="Produktivitas" />
 
       <ListGroup>
+        <ListRow
+          icon="shield-outline"
+          title="App Blocker"
+          subtitle="Atur sesi fokus dan batas waktu produktivitas"
+          onPress={() => router.push("/app-blocker")}
+        />
         <ListRow
           icon="shield-checkmark-outline"
           title="Strict Mode"
@@ -363,7 +365,7 @@ export default function ProfileScreen() {
         <ListRow
           icon="bed-outline"
           title="Kelola mode sakit"
-          onPress={() => router.push('/sick-mode')}
+          onPress={() => router.push("/sick-mode")}
         />
 
         <ListRow
@@ -381,19 +383,19 @@ export default function ProfileScreen() {
         <ListRow
           icon="barbell-outline"
           title="Workout"
-          onPress={() => router.push('/workout')}
+          onPress={() => router.push("/workout")}
         />
 
         <ListRow
           icon="location-outline"
           title="Cari tempat sekitar"
-          onPress={() => router.push('/places')}
+          onPress={() => router.push("/places")}
         />
 
         <ListRow
           icon="sparkles-outline"
           title="Rantau AI"
-          onPress={() => router.push('/assistant')}
+          onPress={() => router.push("/assistant")}
         />
       </ListGroup>
 
@@ -429,18 +431,13 @@ export default function ProfileScreen() {
 
       <Text style={styles.note}>
         Backup dapat dibagikan lewat aplikasi di perangkatmu. Sinkronisasi
-        Google Drive belum termasuk. Izin notifikasi tidak otomatis
-        menjadwalkan pengingat; jika Expo Go tidak mendukung, gunakan
-        development build.
+        Google Drive belum termasuk. Izin notifikasi tidak otomatis menjadwalkan
+        pengingat; jika Expo Go tidak mendukung, gunakan development build.
       </Text>
 
       <View style={styles.footer}>
         <View style={styles.brandMark}>
-          <Ionicons
-            name="compass-outline"
-            size={20}
-            color={colors.onPrimary}
-          />
+          <Ionicons name="compass-outline" size={20} color={colors.onPrimary} />
         </View>
 
         <Text style={font.heading}>Rantau Yuk</Text>
@@ -456,14 +453,14 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   center: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     backgroundColor: colors.bg,
   },
 
   profileCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: spacing.lg,
     padding: spacing.lg,
     borderRadius: radius.lg,
@@ -475,13 +472,13 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 32,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     backgroundColor: colors.primaryTint,
   },
   avatarText: {
     fontSize: 26,
-    fontWeight: '800',
+    fontWeight: "800",
     color: colors.primary,
   },
   profileText: {
@@ -489,8 +486,8 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   badges: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
+    flexDirection: "row",
+    flexWrap: "wrap",
     gap: spacing.sm,
   },
 
@@ -500,7 +497,7 @@ const styles = StyleSheet.create({
   },
 
   footer: {
-    alignItems: 'center',
+    alignItems: "center",
     gap: 4,
     marginTop: spacing.lg,
   },
@@ -508,8 +505,8 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 13,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     backgroundColor: colors.primary,
     marginBottom: 4,
   },

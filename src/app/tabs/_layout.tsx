@@ -7,23 +7,21 @@ import { colors } from '@/theme';
 type IconName = keyof typeof Ionicons.glyphMap;
 
 function tabIcon(active: IconName, inactive: IconName) {
-  return function TabIcon({
+  return ({
     color,
     focused,
     size,
   }: {
-    color: string;
+    color: any;
     focused: boolean;
     size: number;
-  }) {
-    return (
-      <Ionicons
-        name={focused ? active : inactive}
-        size={size}
-        color={color}
-      />
-    );
-  };
+  }) => (
+    <Ionicons
+      name={focused ? active : inactive}
+      size={size}
+      color={color}
+    />
+  );
 }
 
 export default function TabsLayout() {
@@ -32,15 +30,19 @@ export default function TabsLayout() {
       screenOptions={{
         headerShown: false,
         tabBarHideOnKeyboard: true,
+
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textFaint,
+
         tabBarLabelStyle: {
           fontSize: 11,
           fontWeight: '600',
         },
+
         tabBarItemStyle: {
           paddingTop: 4,
         },
+
         tabBarStyle: {
           backgroundColor: colors.surface,
           borderTopColor: colors.border,

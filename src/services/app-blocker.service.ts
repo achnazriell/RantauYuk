@@ -70,6 +70,8 @@ async function readValue(
     return getSetting(key);
   }
 
+  await resolveDatabase(db);
+
   const row = await db.getFirstAsync<{ value: string }>(
     'SELECT value FROM app_settings WHERE key = ?',
     key,
@@ -87,6 +89,8 @@ async function writeValue(
     await setSetting(key, value);
     return;
   }
+
+  await resolveDatabase(db);
 
   await db.runAsync(
     `INSERT INTO app_settings (key, value, updated_at)
